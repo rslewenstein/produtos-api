@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"produtos-api/controller"
+
+	"github.com/gorilla/mux"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -13,9 +15,11 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRequests() {
-	http.HandleFunc("/", home)
-	http.HandleFunc("/listar", controller.ListarProdutos())
-	log.Fatal(http.ListenAndServe(":5000", nil))
+	myRoute := mux.NewRouter().StrictSlash(true)
+	myRoute.HandleFunc("/", home)
+	myRoute.HandleFunc("/listar", controller.ListarProdutos()).Methods("GET")
+	myRoute.HandleFunc("/adicionar", controller.AdicionarProdutos()).Methods("POST")
+	log.Fatal(http.ListenAndServe(":5000", myRoute))
 }
 
 func main() {
